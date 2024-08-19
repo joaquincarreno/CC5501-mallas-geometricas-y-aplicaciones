@@ -11,6 +11,8 @@ from algorithms.ray_casting import *
 class Controller:
     x = 0.0
     y = 0.0
+    vx = 0.0
+    vy = 0.0
 
 
 controller = Controller()
@@ -72,13 +74,13 @@ if __name__ == "__main__":
     @win.event
     def on_key_press(key, mod):
         if key == pyglet.window.key.UP:
-            controller.y += 0.05
+            controller.vy = 0.005
         elif key == pyglet.window.key.DOWN:
-            controller.y -= 0.05
+            controller.vy = -0.005
         elif key == pyglet.window.key.LEFT:
-            controller.x -= 0.05
+            controller.vx = -0.005
         elif key == pyglet.window.key.RIGHT:
-            controller.x += 0.05
+            controller.vx = 0.005
         elif key == pyglet.window.key.SPACE:
             point = (controller.x, controller.y)
             polygon = [
@@ -86,6 +88,17 @@ if __name__ == "__main__":
             ]
             inside, crossing = ray_casting(point, polygon)
             print(f"Esta dentro: {inside}, número de intersecciones: {crossing}")
+
+    @win.event
+    def on_key_release(key, mod):
+        if key == pyglet.window.key.UP:
+            controller.vy = 0
+        elif key == pyglet.window.key.DOWN:
+            controller.vy = 0
+        elif key == pyglet.window.key.LEFT:
+            controller.vx = 0
+        elif key == pyglet.window.key.RIGHT:
+            controller.vx = 0
 
     @win.event
     def on_draw():
@@ -102,4 +115,9 @@ if __name__ == "__main__":
         dot.position[:] = [controller.x, controller.y, 0]
         dot.draw(GL.GL_POINTS)
 
+    def update(time):
+        controller.x = controller.x + controller.vx
+        controller.y = controller.y + controller.vy
+
+    pyglet.clock.schedule_interval(update, 1 / 60)
     pyglet.app.run()
