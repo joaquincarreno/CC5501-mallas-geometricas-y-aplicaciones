@@ -25,7 +25,8 @@ def uniformScale(s):
 class Controller:
     x = 0.0
     y = 0.0
-    zoom = 1.0
+    vx = 0.0
+    vy = 0.0
 
 
 controller = Controller()
@@ -43,8 +44,17 @@ if __name__ == "__main__":
     height = 700
     win = pyglet.window.Window(width, height)
 
-    vertices, indices = read_m2d(path_to_this_file / "../assets" / m2d_file)
-    controller.zoom = 1 / max(vertices)
+    vertices, indices, min_x, min_y, max_x, max_y = read_m2d(
+        path_to_this_file / "../assets" / m2d_file
+    )
+
+    range_x = abs(max_x - min_x)
+    range_y = abs(max_y - min_y)
+    zoom = max([range_x, range_y]) / 2
+
+    controller.zoom = 0.8 / zoom
+    controller.x = 1 - range_x / zoom
+    controller.y = 1 - range_y / zoom
 
     with open(path_to_this_file / "../shaders/simple_vertex_program.glsl") as f:
         vertex_source_code = f.read()
@@ -67,13 +77,30 @@ if __name__ == "__main__":
     @win.event
     def on_key_press(key, mod):
         if key == pyglet.window.key.UP:
-            controller.y += 0.005
+            if mod & pyglet.window.key.MOD_CTRL:
+                controller.zoom *= 1.2
+            else:
+                controller.vy = 0.005
         elif key == pyglet.window.key.DOWN:
-            controller.y += -0.005
+            if mod & pyglet.window.key.MOD_CTRL:
+                controller.zoom /= 1.2
+            else:
+                controller.vy = -0.005
         elif key == pyglet.window.key.LEFT:
-            controller.x += -0.005
+            controller.vx = -0.005
         elif key == pyglet.window.key.RIGHT:
-            controller.x += 0.005
+            controller.vx = 0.005
+
+    @win.event
+    def on_key_release(key, mod):
+        if key == pyglet.window.key.UP:
+            controller.vy = 0
+        elif key == pyglet.window.key.DOWN:
+            controller.vy = 0
+        elif key == pyglet.window.key.LEFT:
+            controller.vx = 0
+        elif key == pyglet.window.key.RIGHT:
+            controller.vx = 0
 
     @win.event
     def on_draw():
@@ -92,5 +119,11 @@ if __name__ == "__main__":
         pipeline["scale"] = uniformScale(controller.zoom).reshape(16, 1, order="F")
 
         gpu_data.draw(GL.GL_TRIANGLES)
+
+    def update(time):
+        controller.x += controller.vx
+        controller.y += controller.vy
+
+    pyglet.clock.schedule_interval(update, 1 / 60)
 
     pyglet.app.run()
