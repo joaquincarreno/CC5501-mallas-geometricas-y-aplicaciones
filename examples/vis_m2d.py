@@ -72,7 +72,7 @@ if __name__ == "__main__":
         len(vertices) // 3, GL.GL_TRIANGLES, indices
     )
     gpu_data.position[:] = vertices
-    gpu_data.color[:] = [1.0] * len(vertices)
+    gpu_data.color[:] = np.full(len(vertices), 0.5)
 
     pipeline.use()
 
