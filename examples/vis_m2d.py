@@ -42,7 +42,9 @@ except:
 if __name__ == "__main__":
     width = 700
     height = 700
-    win = pyglet.window.Window(width, height)
+    win = pyglet.window.Window(
+        width, height, "Visualizador de archivos m2d", resizable=False
+    )
 
     vertices, indices, min_x, min_y, max_x, max_y = read_m2d(
         path_to_this_file / "../assets" / m2d_file
@@ -101,6 +103,14 @@ if __name__ == "__main__":
             controller.vx = 0
         elif key == pyglet.window.key.RIGHT:
             controller.vx = 0
+
+    from pyglet.window import mouse
+
+    @win.event
+    def on_mouse_drag(x, y, dx, dy, buttons, modifiers):
+        if buttons & mouse.LEFT:
+            controller.x += 2 * dx / width
+            controller.y += 2 * dy / height
 
     @win.event
     def on_draw():
