@@ -1,6 +1,6 @@
 # CC5501-mallas-geometricas-y-aplicaciones
 
-Repositorio con el material necesario para que les estudiantes puedan visualizar los algoritmos que desarrollen.
+Repositorio con el material necesario para que les estudiantes puedan visualizar las triangulaciones. Con ejemplos de carga de PSLG en formato m2d.
 
 ## Instalación
 
