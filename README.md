@@ -11,10 +11,3 @@ python -m venv venv
 # instalar dependencias
 ./venv/bin/python -m pip install -r ./requirements.txt
 ```
-
-## Ejecución
-
-```shell
-# correr códigos con el interprete de python del ambiente
-./venv/bin/python ./examples/ex_ray_casting_point_pyglet.py
-```
